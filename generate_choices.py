@@ -106,8 +106,6 @@ def get_text_response(word_triplet, payload, headers):
         "https://api.openai.com/v1/chat/completions", headers=headers, json=payload
     ).json()
 
-    breakpoint()
-
     return response
 
 
@@ -117,17 +115,19 @@ def main():
     things_concepts = pd.read_csv("./data/things_concepts.tsv", sep="\t")
     non_unique_words = parse_non_unique_words("./data/NonUniqueWords_edited.xlsx")
 
-    prompt = toml.load("./data/prompt_specifics_images.toml")
-    payload = prompt["payload"]
-    headers = prompt["headers"]
+    prompt_images = toml.load("./data/prompt_specifics_images.toml")
+    payload_images = prompt_images["payload"]
+    headers_images = prompt_images["headers"]
+
+    prompt_words = toml.load("./data/prompt_specifics_words.toml")
+    payload_words = prompt_words["payload"]
+    headers_words = prompt_words["headers"]
 
     dl = dataloader(image_dir, train_fp, things_concepts, 1000, non_unique_words)
 
     for image_tripet, word_triplet in dl:
-        # get_image_response(image_tripet, payload, headers)
-        get_text_response(word_triplet, payload, headers)
-
-        breakpoint()
+        # get_image_response(image_tripet, payload_images, headers_images)
+        get_text_response(word_triplet, payload_words, headers_words)
 
 
 if __name__ == "__main__":
