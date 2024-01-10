@@ -9,6 +9,7 @@ import toml
 import random
 import copy
 from typing import Generator
+from openai import OpenAI
 
 
 def parse_non_unique_words(path: str) -> list:
@@ -41,7 +42,7 @@ def dataloader(
 
     def load_image(cls_name: str) -> Image:
         image_path = os.path.join(image_dir, cls_name + ".jpg")
-        image = Image.open(image_path).resize((128, 128))
+        image = Image.open(image_path).resize((64, 64))
         return image
 
     def not_unique(words: str) -> bool:
@@ -72,31 +73,31 @@ def load_instructions(path: str):
         print(e)
 
 
-def get_image_choice(image_triplet, payload, headers):
-    payload_cp = copy.deepcopy(payload)
+def get_image_choice(client, image_triplet, text):
+    # We need to encode the images as base64 strings
+    content = copy.deepcopy(text)
+    content = [{"type": "text", "text": text}]
 
-    # We pass each image separately and don't concatenate them
     for image in image_triplet:
-        q.append(
-            {
-                "type": "image_url",
-                "img_url": f"data:image/jpeg;base64,{encode_image(image)}",
-            }
-        )
+        image_encoding = {
+            "type": "image_url",
+            "image_url": f"data:image/jpeg;base64,{encode_image(image)}",
+        }
+        content.append(image_encoding)
 
-    response = requests.post(
-        "https://api.openai.com/v1/chat/completions", headers=headers, json=payload_cp
-    ).json()
+    response = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=[{"role": "user", "content": content}],
+        max_tokens=300,
+    )
 
-    breakpoint()
-
-    choice = response["choices"][0]["message"]["content"]
+    choice = response.choices[0].message.content
     descriptions, choice, position = process_image_response(response)
     return descriptions, choice, position
 
 
 def process_image_response(response):
-    choice = response["choices"][0]["message"]["content"]
+    choice = response.choices[0].message.content
     descriptions, choice = choice.split("\n")
     descriptions = descriptions.split(",")
     for i, d in enumerate(descriptions):
@@ -110,20 +111,26 @@ def process_image_response(response):
     return descriptions, choice_name, position
 
 
-def get_word_choice(word_triplet, payload, headers):
-    payload_cp = copy.deepcopy(payload)
+def get_word_choice(client, word_triplet, text):
     word_triplet = [w.replace("_", " ") for w in word_triplet]
-    task_string = "Execute this task for the following words\n" + " ".join(word_triplet)
-
-    payload_cp["messages"][0]["content"][0][
-        "text"
-    ] += task_string  # add triplet of words to the prompt
-
-    response = requests.post(
-        "https://api.openai.com/v1/chat/completions", headers=headers, json=payload_cp
-    ).json()
-
-    choice = response["choices"][0]["message"]["content"]
+    task_string = "Execute this task for the following words\n" + ",".join(word_triplet)
+    text += task_string
+    response = client.chat.completions.create(
+        model="gpt-4-vision-preview",
+        messages=[
+            {
+                "role": "user",
+                "content": [
+                    {
+                        "type": "text",
+                        "text": text,
+                    }
+                ],
+            }
+        ],
+        max_tokens=300,
+    )
+    choice = response.choices[0].message.content
     choice, position = choice.split(",")
     position = int(position) - 1  # convert to 0-based indexing
 
@@ -140,33 +147,25 @@ def shuffle_data(images: list, words: list, triplet: list):
 
 # TODO Still need to figure out why choices are sometimes empty, e.g. why the GPT responses in not correctly parsed.
 # NOTE sometimes I get error message when some input is not allowed...
+# TODO Get it to run first and then outsource the specifics in the TOML file maybe!
+# TODO Change all the stupid numpy array and list conver
 def main():
     image_dir = "./data/images/"
     train_fp = "./data/trainset.txt"
     things_concepts = pd.read_csv("./data/things_concepts.tsv", sep="\t")
     non_unique_words = parse_non_unique_words("./data/NonUniqueWords_edited.xlsx")
+    prompt_images = toml.load("./data/prompt_specifics_images.toml")
+    prompt_words = toml.load("./data/prompt_specifics_words.toml")
 
     image_triplets = np.loadtxt(train_fp, dtype=int)
 
     random.seed(0)
     rng = np.random.default_rng(0)
     rng.shuffle(image_triplets, axis=0)
-    prompt_images = toml.load("./data/prompt_specifics_images.toml")
 
-    # Payload images are the prompts used for images
-    payload_images = prompt_images["payload"]
-    headers_images = prompt_images["headers"]
-
-    # The prompts used for words are different from the prompts used for images
-    prompt_words = toml.load("./data/prompt_specifics_words.toml")
-    payload_words = prompt_words["payload"]
-    headers_words = prompt_words["headers"]
-
+    client = OpenAI()
     dl = dataloader(image_dir, image_triplets, things_concepts, non_unique_words)
-
     max_iterations = 20
-
-    # Prepare a list to hold all the rows
     responses = []
     i = 0
     for image_triplet, word_triplet, human_indices in dl:
@@ -180,9 +179,10 @@ def main():
         #     continue
 
         triplet_responses = dict()
-        triplet_responses["human_indices"] = human_indices
+        triplet_responses["human_indices"] = list(human_indices)
         triplet_responses["human_triplet"] = word_triplet
         triplet_responses["human_choice"] = word_triplet[-1]
+        triplet_responses["human_ooo"] = human_indices[-1]
 
         image_triplet, word_triplet, gpt_indices = shuffle_data(
             image_triplet, word_triplet, human_indices
@@ -192,32 +192,34 @@ def main():
             image_descriptions,
             image_choice,
             image_position,
-        ) = get_image_choice(image_triplet, payload_images, headers_images)
+        ) = get_image_choice(client, image_triplet, prompt_images["prompt"])
 
         word_choice, word_position = get_word_choice(
-            word_triplet, payload_words, headers_words
+            client, word_triplet, prompt_words["prompt"]
         )
 
         word_choice = word_choice.replace(" ", "_")
         image_choice = image_choice.replace(" ", "_")
 
         # We know move the index of the odd one out to the last position
-        ooo_word = np.roll(gpt_indices, -word_position)
-        ooo_image = np.roll(gpt_indices, -image_position)
+        ooo_word = list(np.roll(gpt_indices, -word_position))
+        ooo_image = list(np.roll(gpt_indices, -image_position))
 
         ## Add below to the triplet_responses
         triplet_responses["gpt_indices"] = gpt_indices
         triplet_responses["gpt_image_descriptions"] = image_descriptions
         triplet_responses["gpt_image_indices"] = ooo_image
+        triplet_responses["gpt_image_ooo"] = ooo_image[-1]
         triplet_responses["gpt_image_choice"] = image_choice
         triplet_responses["gpt_word_indices"] = ooo_word
+        triplet_responses["gpt_word_ooo"] = ooo_word[-1]
         triplet_responses["gpt_word_choice"] = word_choice
 
-        breakpoint()
+        print(word_triplet, image_descriptions)
 
         responses.append(triplet_responses)
         df = pd.DataFrame(responses, columns=triplet_responses.keys())
-        df.to_csv("./data/gpt4_choice_words_images.csv", index=False)
+        df.to_pickle("./data/gpt4_choice_words_images.pkl")
 
         # except Exception as e:
         #     print(e)
