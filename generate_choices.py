@@ -15,7 +15,7 @@ from utils import parse_non_unique_words
 
 
 # Martins key right now. Each triplet costs so lets think first before trying out many things
-API_key = "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"
+API_key = None  # enter the key
 os.environ["OPENAI_API_KEY"] = API_key
 
 
