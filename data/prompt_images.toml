@@ -1,0 +1,61 @@
+# Here we can check multiple prompts in the TOML files
+
+
+prompt = """
+Please take your time to read these instructions and FAQ.
+Instructions
+
+You will see three pictures each showing an object or "thing". Two of them will be more similar to each other. 
+Your job is to select the odd-one out. Sometimes the decision is very difficult. Base your decision only on the most prominent 
+object or "thing" in an image.
+
+
+FAQ
+
+Q: The picture shows something I would not call an object (e.g. a baby), what should I do?
+A: We use the word "object" to refer to the most prominent "thing" in an image. Just base your decision on that (in this case baby).
+
+Q: Can I choose the odd-one out based on the size of the pictures on the screen or the background alone?
+A: No, please choose them only based on the object or "thing".
+
+Q: I don't recognize one of the "things", what should I do?
+A: Please guess what that "thing" could be and base your decision on this.
+
+Your response MUST ONLY contain the position of the odd-one-out. For example:
+3
+
+Execute this task for the given triplet of images
+"""
+
+
+prompt_adapted = """
+Instructions for Triplet Odd-One-Out Task
+
+Task: Identify the odd-one-out among three images. Each image features a primary object or entity. Y
+our decision must be based solely on the most prominent object in each image.
+
+Key Points:
+
+Focus only on the most prominent object in each image.
+Ignore background and size of the images.
+If unsure about an object, make your best guess.
+
+FAQ
+
+1. Unclear Objects: If an image doesn't have a clear object, focus on the most noticeable feature or entity in the image.
+2. Basis for Decision: Only the primary object in each image should influence your decision. Do not consider image size or background.
+3. Unrecognizable Objects: If you cannot recognize an object, guess its nature and base your decision on that assumption.
+
+Response Format:
+
+Line 1: List the names of the objects in the order they appear.
+Line 2: State the name of the odd-one-out object and its position in the sequence.
+
+Examples:
+
+Line 1: cat, dog, apple
+Line 2: apple, 3
+
+Line 1: car, bicycle, motorcycle    
+Line 2: car, 1
+"""

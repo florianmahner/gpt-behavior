@@ -1,0 +1,5 @@
+- NonUniqueWords_edited.xlsx: Contains a list of all 1854 objects and where objects that have multiple meanings have a second column 
+
+- things_concepts.tsv: Contains a list of all 1854 objects and their corresponding concept informations
+- trainset.txt: All triplets of the 4.2 million training triplets
+- words48.csv: Contains the list of the 48 words that were used to sample the full similarity matrix and compute the noise ceilings in the OG things paper.

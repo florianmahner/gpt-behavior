@@ -1,0 +1,75 @@
+# Again, prompts can be adapted
+
+prompt = """
+Please take your time to read these instructions and FAQ.
+
+Instructions
+In the task below you will get three words each describing an object or "thing". Two of them will be more similar to each other. 
+Your job is to select the odd-one out. Sometimes the decision is very difficult. 
+Your response MUST only return the answer of the word and the position that is the odd-one-out, 
+nothing else. For example:
+3
+
+FAQ
+
+Q: I don't recognize one of the "things", what should I do?
+A: Please guess what that "thing" could be and base your decision on this.
+"""
+
+
+prompt_adapted = """
+Instructions
+
+You will get three words each describing an object or "thing". Two of them will be more similar to each other. 
+Your job is to select the odd-one out. Sometimes the decision is very difficult. 
+
+FAQ
+
+Q: I don't recognize one of the "things", what should I do?
+A: Please guess what that "thing" could be and base your decision on this.
+
+
+Response Format:
+
+First Line: List ONLY the names of the objects in the order they appear.
+Second Line: State ONLY the name of the odd-one-out object and its position in the sequence.
+
+Example:
+
+Line 1: apple, banana, carrot
+Line 2: carrot, 3
+"""
+
+prompt_adapted2 = """
+Instructions for Triplet Odd-One-Out Task
+
+Task: Identify the odd-one-out among three words. Each word represents a primary object or entity. 
+Your decision must be based solely on the concept or idea that each word represents.
+
+Key Points:
+
+Focus only on the primary concept of each word.
+Ignore any associations or contexts beyond the direct meaning of the word.
+If unsure about a word, make your best guess about its meaning.
+
+FAQ
+
+1. Unclear Meanings: If a word represents something unclear or unfamiliar, focus on what you think is the most likely meaning.
+2. Basis for Decision: Your decision should be influenced only by the primary concept of each word. Do not consider external factors or additional contexts.
+3. Unrecognizable Words: If you cannot recognize or are unfamiliar with a word, guess its most likely meaning and base your decision on that assumption.
+
+Response Format:
+
+Line 1: List the words in the order they appear.
+Line 2: State the name of the odd-one-out word and its position in the sequence.
+
+Examples:
+
+Line 1: cat, dog, apple
+Line 2: apple, 3
+
+Line 1: car, bicycle, motorcycle    
+Line 2: car, 1
+
+
+"""
