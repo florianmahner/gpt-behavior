@@ -3,7 +3,7 @@ max_triplets = 20
 temperature = 0.2
 
 image_dir = "./data/images/"
-train_fp = "./data/behavior_triplets/trainset-4mio.txt"
+train_fp = "./data/behavior_triplets_train90.txt" # we need to merge the train and test files at the end
 
 concept_fp = "./data/things_concepts.tsv"
 non_unique_words_fp = "./data/NonUniqueWords_edited.xlsx"
