@@ -11,6 +11,12 @@ import copy
 from typing import Generator
 from openai import OpenAI
 from tomlparse import argparse
+from utils import parse_non_unique_words
+
+
+# Martins key right now. Each triplet costs so lets think first before trying out many things
+API_key = "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"
+os.environ["OPENAI_API_KEY"] = API_key
 
 
 def parse_args():
@@ -67,24 +73,12 @@ def parse_args():
         help="Max number of triplets to sample",
     )
     parser.add_argument(
-        "--compute_noise_ceilings",
-        action="store_true",
-        help="Compute noise ceilings",
-    )
-    parser.add_argument(
         "--extract_responses",
         action="store_true",
         help="Extract responses",
     )
 
     return parser.parse_args()
-
-
-def parse_non_unique_words(path: str) -> list:
-    """Parse the file and return a list of words"""
-    file = pd.read_excel(path)
-    non_unique = set(file[file["alternative"].notnull()]["unique_id"])
-    return non_unique
 
 
 def compute_updated_costs(n_images: int) -> None:
@@ -110,6 +104,7 @@ def triplet_generator(
     concepts: pd.DataFrame,
     non_unique_words: set = None,
     seed: int = 0,
+    check_word_ambiguity=True,
 ) -> Generator[tuple[list[Image.Image], list[str], np.ndarray], None, None]:
     def get_cls_name(index: int) -> str:
         return concepts.iloc[index]["uniqueID"]
@@ -120,9 +115,9 @@ def triplet_generator(
         return image
 
     def not_unique(words: str) -> bool:
-        """check if the triplet contains non-unique words, e.g. words that are not twice
+        """checks if the triplet contains non-unique words, e.g. words that are not twice
         in the things object images and therefore might be ambiguous for when collecting
-        gpt3 ooo. judgments based on words"""
+        gpt3 ooo judgments based on words"""
         words = set(words)
         n = len(words.intersection(non_unique_words))
         return True if n > 0 else False
@@ -139,7 +134,9 @@ def triplet_generator(
         words = list(map(get_cls_name, triplet))
         images = list(map(load_image, words))
 
-        if not_unique(words):
+        # if we only sample behavior triplets for images, we want to include all and then
+        # not check for word ambiguity
+        if check_word_ambiguity and not_unique(words):
             continue
         yield images, words, list(triplet)
 
@@ -214,7 +211,6 @@ def process_image_response(response):
 
 
 def process_word_response(response):
-    breakpoint()
     choice = response.choices[0].message.content
     choice, position = choice.split(",")
     position = int(position) - 1  # convert to 0-based indexing
@@ -246,7 +242,6 @@ def create_dataloader(
 
 def save_responses(responses: list, metadata: dict, output_fp: str) -> None:
     df = pd.DataFrame(responses, columns=responses[0].keys())
-
     save_dict = {"metadata": metadata, "dataframe": df}
     with open(output_fp, "wb") as file:
         pickle.dump(save_dict, file)
@@ -269,43 +264,6 @@ def move_ooo_to_last_position(human_indices, ooo_index):
     ooo = indices.pop(ooo_index)
     indices.append(ooo)
     return indices
-
-
-def compute_noise_ceilings(
-    dataloader,
-    client,
-    metadata,
-    prompt_images,
-    prompt_words,
-    max_triplets,
-    output_fp,
-):
-    n_repeats = 10
-    max_triplets = 100
-
-    temperatures = [0.2, 0.5, 0.9]
-
-    responses = [{t: [] for t in temperatures} for _ in range(n_repeats)]
-
-    for i, (image_triplet, word_triplet, human_indices) in enumerate(dataloader):
-        print(f"Process triplet {i} / {args.max_triplets}")
-
-        for t in temperatures:
-            triplet_responses = process_triplet(
-                client,
-                image_triplet,
-                word_triplet,
-                human_indices,
-                prompt_words,
-                prompt_images,
-                t,
-            )
-            responses[i][t].append(triplet_responses)
-
-        save_responses(responses, metadata, output_fp)
-
-        if i == max_triplets - 1:
-            break
 
 
 def process_triplet(
@@ -384,8 +342,6 @@ def extract_responses(
             break
 
 
-# TODO Change all the stupid numpy array and list conver
-# TODO Think about my random seed quickly. Should I just take any triplets or randomly sample different ones?
 def main(args):
     compute_updated_costs(args.max_triplets)
 
@@ -402,17 +358,6 @@ def main(args):
     prompt_words = toml.load(args.prompt_words_fp)
     client = OpenAI()
     metadata = pop_keys_from_arguments(vars(args))
-
-    if args.compute_noise_ceilings:
-        compute_noise_ceilings(
-            dataloader,
-            client,
-            metadata,
-            prompt_images,
-            prompt_words,
-            args.max_triplets,
-            args.output_fp,
-        )
 
     if args.extract_responses:
         extract_responses(
