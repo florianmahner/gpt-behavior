@@ -1,0 +1,17 @@
+image_size = 256
+max_triplets = 20
+temperature = 0.2
+
+image_dir = "./data/images/"
+train_fp = "./data/behavior_triplets/trainset-4mio.txt"
+
+concept_fp = "./data/things_concepts.tsv"
+non_unique_words_fp = "./data/NonUniqueWords_edited.xlsx"
+prompt_words_fp = "./data/prompt_words.toml"
+prompt_images_fp = "./data/prompt_images.toml"
+
+output_fp = "./data/choices/gpt4_choices_20_0.2.pkl"
+
+compute_noise_ceilings = false
+extract_responses = true
+
