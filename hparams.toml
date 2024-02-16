@@ -1,16 +1,15 @@
 image_size = 256
-max_triplets = 20
-temperature = 0.2
+max_triplets = 5
+temperature = 1
+seed = 3
 
-image_dir = "./data/images/"
-train_fp = "./data/behavior_triplets_train90.txt" # we need to merge the train and test files at the end
+image_dir = "./data/things-behavior-images/"
+train_fp = "./data/1k_filtered_triplets.txt" # we need to merge the train and test files at the end
 
 concept_fp = "./data/things_concepts.tsv"
 non_unique_words_fp = "./data/NonUniqueWords_edited.xlsx"
-prompt_words_fp = "./data/prompt_words.toml"
-prompt_images_fp = "./data/prompt_images.toml"
 
-output_fp = "./data/choices/gpt4_choices_20_0.2.pkl"
+output_fp = "./gpt4_test_10.pkl"
 
 compute_noise_ceilings = false
 extract_responses = true

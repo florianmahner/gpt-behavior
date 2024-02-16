@@ -1,13 +1,13 @@
 # Again, prompts can be adapted
 
-prompt = """
+prompt1 = """
 Please take your time to read these instructions and FAQ.
 
 Instructions
 In the task below you will get three words each describing an object or "thing". Two of them will be more similar to each other. 
 Your job is to select the odd-one out. Sometimes the decision is very difficult. 
-Your response MUST only return the answer of the word and the position that is the odd-one-out, 
-nothing else. For example:
+Your response MUST only return the position that is the odd-one-out, nothing else. 
+For example:
 3
 
 FAQ
@@ -16,31 +16,26 @@ Q: I don't recognize one of the "things", what should I do?
 A: Please guess what that "thing" could be and base your decision on this.
 """
 
-
-prompt_adapted = """
-Instructions
+prompt2 = """
+You are a participant in a study. Please take your time to read the instructions. 
 
 You will get three words each describing an object or "thing". Two of them will be more similar to each other. 
-Your job is to select the odd-one out. Sometimes the decision is very difficult. 
+Your job is to select the odd-one out. Sometimes the decision is very difficult. If you are unsure what the word is, make a guess and base your decision on this.
+Your response MUST ONLY contain the position of the odd-one-out in the sequence of words. 
+For example:
+3
 
-FAQ
-
-Q: I don't recognize one of the "things", what should I do?
-A: Please guess what that "thing" could be and base your decision on this.
-
-
-Response Format:
-
-First Line: List ONLY the names of the objects in the order they appear.
-Second Line: State ONLY the name of the odd-one-out object and its position in the sequence.
-
-Example:
-
-Line 1: apple, banana, carrot
-Line 2: carrot, 3
+Execute this task for the given 3 words
 """
 
-prompt_adapted2 = """
+prompt3 = """
+You will be given 3 words. 
+Your task is to select the odd one out. Your decision should be based only on the object or “thing” the word describes. 
+If you are unsure what it is, guess and base your decision on this. 
+Your response MUST ONLY contain the position of the odd one out. For example: 3. 
+"""
+
+prompt4 = """
 Instructions for Triplet Odd-One-Out Task
 
 Task: Identify the odd-one-out among three words. Each word represents a primary object or entity. 
@@ -55,21 +50,24 @@ If unsure about a word, make your best guess about its meaning.
 FAQ
 
 1. Unclear Meanings: If a word represents something unclear or unfamiliar, focus on what you think is the most likely meaning.
-2. Basis for Decision: Your decision should be influenced only by the primary concept of each word. Do not consider external factors or additional contexts.
+2. Basis for Decision: Your decision should be influenced only by the primary concept of each word. 
+Do not consider external factors or additional contexts.
 3. Unrecognizable Words: If you cannot recognize or are unfamiliar with a word, guess its most likely meaning and base your decision on that assumption.
 
 Response Format:
+ONLY the position of the odd one out in the sequence. 
+For example: 
+3
+"""
 
-Line 1: List the words in the order they appear.
-Line 2: State the name of the odd-one-out word and its position in the sequence.
+prompt5 = """
+Take your time to read the instructions. 
 
-Examples:
+Task: Identify the odd-one-out among three words. Each word represents a primary object or entity. Base your decision on this. 
 
-Line 1: cat, dog, apple
-Line 2: apple, 3
+Step 1: Identify the primary concept of each word. If it is unclear, focus on what you think is the most likely meaning. 
+Ignore external factors or additional contexts. If you cannot recognize or are unfamiliar with a word, make your best guess. 
 
-Line 1: car, bicycle, motorcycle    
-Line 2: car, 1
-
-
+Step 2: Decide which two words are more similar to each other, and which one is the odd one out. 
+Respond ONLY with the position of the odd one out in the sequence of words. For example: 3
 """

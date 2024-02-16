@@ -1,7 +1,7 @@
 # Here we can check multiple prompts in the TOML files
 
 
-prompt = """
+prompt1 = """
 Please take your time to read these instructions and FAQ.
 Instructions
 
@@ -28,11 +28,31 @@ Execute this task for the given triplet of images
 """
 
 
-prompt_adapted = """
-Instructions for Triplet Odd-One-Out Task
+prompt2 = """
+You are a participant in a study. Please take your time to read these instructions. 
 
-Task: Identify the odd-one-out among three images. Each image features a primary object or entity. Y
-our decision must be based solely on the most prominent object in each image.
+You will see three pictures each showing an object or "thing". Two of them will be more similar to each other. 
+Your task is to select the odd one out. Sometimes the decision is very difficult. 
+Base your decision only on the most prominent object or "thing" in an image.
+Do not base your decision on the background. 
+If you are unsure what the “thing” is, guess what it might be and base your decision on this. 
+Your response MUST ONLY contain the position of the odd-one-out. For example:
+3
+Execute this task for the given triplet of images
+"""
+
+prompt3 = """
+You will be shown 3 images. 
+Your task is to select the odd one out. 
+Your decision should be based on the most prominent object or “thing” in each image. 
+Do not base your decision on the background. 
+If you are not sure what the most prominent “thing” in an image is, guess and base your decision on this. 
+Your response MUST ONLY contain the position of the odd one out. For example: 3. 
+"""
+
+prompt4 = """
+Task: Identify the odd-one-out among three images. Each image features a primary object or entity. 
+Your decision must be based solely on the most prominent object in each image.
 
 Key Points:
 
@@ -47,15 +67,20 @@ FAQ
 3. Unrecognizable Objects: If you cannot recognize an object, guess its nature and base your decision on that assumption.
 
 Response Format:
+ONLY the position of the odd one out in the sequence. 
+For example: 
+3
+"""
 
-Line 1: List the names of the objects in the order they appear.
-Line 2: State the name of the odd-one-out object and its position in the sequence.
+prompt5 = """  
+Take your time to read the instructions. 
 
-Examples:
+Task: Identify the odd-one-out among three images. Each image features a primary object or entity. Base your decision on this. 
 
-Line 1: cat, dog, apple
-Line 2: apple, 3
+Step 1: Identify the most prominent object in each image, if it is unclear, focus on the most noticeable feature or entity. 
+Ignore background and size of the images. If you cannot recognize the most prominent object, make your best guess. 
 
-Line 1: car, bicycle, motorcycle    
-Line 2: car, 1
+Step 2: Decide which two images are more similar to each other, and which one is the odd one out. 
+Respond ONLY with the position of the odd one out in the sequence of images. 
+For example: 3
 """

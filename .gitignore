@@ -1,6 +1,9 @@
 data/choices
-data/images
+data/things-behavior-images
+analysis
+
 trash
+output
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

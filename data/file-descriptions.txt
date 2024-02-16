@@ -3,3 +3,5 @@
 - things_concepts.tsv: Contains a list of all 1854 objects and their corresponding concept informations
 - trainset.txt: All triplets of the 4.2 million training triplets
 - words48.csv: Contains the list of the 48 words that were used to sample the full similarity matrix and compute the noise ceilings in the OG things paper.
+- behavior_triplets_train90_filtered.txt: the behavior train triplets without the ones that could be ambiguous
+- 100filtered_triplets.txt: 100 triplets from behavior_triplets_train90_filtered.txt
