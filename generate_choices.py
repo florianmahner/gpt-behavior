@@ -15,8 +15,9 @@ from utils import parse_non_unique_words
 
 
 # Martins key right now. Each triplet costs so lets think first before trying out many things
-API_key = os.environ["API_Key"]
-
+API_key = os.environ.get('OPENAI_API_KEY')
+assert API_key != None
+os.environ["OPENAI_API_KEY"] = API_key
 
 def parse_args():
     parser = argparse.ArgumentParser()
@@ -141,14 +142,16 @@ def triplet_generator(
     rng = set_seed(seed)
     rng.shuffle(triplet_matrix, axis=0)
     for triplet in triplet_matrix:
-        words = list(map(get_cls_name, triplet))
+        shuffled_triplet = triplet.copy()
+        np.random.shuffle(shuffled_triplet)
+        words = list(map(get_cls_name, shuffled_triplet))
         images = list(map(load_image, words))
-
+        
         # if we only sample behavior triplets for images, we want to include all and then
         # not check for word ambiguity 
         if check_word_ambiguity and not_unique(words):
             continue
-        yield images, words, list(triplet)
+        yield images, words, list(triplet), list(shuffled_triplet)
 
 
 def load_instructions(path: str) -> str:
@@ -171,8 +174,7 @@ def get_image_query(image_triplet, text):
         base64_str = base64.b64encode(byte_data)
         return base64_str.decode("utf-8")
 
-    content = copy.deepcopy(text)
-    content = [{"type": "text", "text": text}]
+    content = []
     for image in image_triplet:
         image_encoding = {
             "type": "image_url",
@@ -181,6 +183,9 @@ def get_image_query(image_triplet, text):
                 "detail": "low",  # NOTE I set this to low to save on tokens 
             },
         }
+        
+        text_encoding = {"type": "text", "text": text}
+        content.append(text_encoding)
         content.append(image_encoding)
     return content
 
@@ -189,7 +194,7 @@ def get_word_query(word_triplet, text):
     """Content for the GPT 4 word query"""
     word_triplet = [w.replace("_", " ") for w in word_triplet]
     task_string = "Execute this task for the following words\n" + ",".join(word_triplet)
-    text += task_string
+    text += task_string 
     content = [{"type": "text", "text": text}]
     return content
 
@@ -197,7 +202,7 @@ def get_word_query(word_triplet, text):
 def get_gpt_response(client, content, temperature=1, max_tokens=300): 
     
     try: 
-        seed = np.random.randint(1, 123456789) # is this okay or do i need to make sure seed is really different every time?
+        seed = np.random.randint(1, 123456789) 
         response = client.chat.completions.create(
             model="gpt-4-vision-preview",
             messages=[{"role": "user", "content": content}],
@@ -214,31 +219,47 @@ def get_gpt_response(client, content, temperature=1, max_tokens=300):
 
 
 def process_image_response(response):
-    choice = response.choices[0].message.content # string 
-    choice = choice.strip()  
-    if len(choice) > 1:
-        descriptions, choice = choice.split("\n")
-        descriptions = [d.strip().replace(" ", "_").lower() for d in descriptions.split(",")]
-        print("longer output: ", descriptions)
-        choice = choice[1] # because it returns e.g. "apple, 3"
-    else:
-        descriptions = None
+    
+    try:
+        choice = response.choices[0].message.content # string 
+        choice = choice.strip()  
+        if len(choice) > 1:
+            descriptions = choice.split("\n")[0]
+            descriptions = [d.strip().replace(" ", "_").lower() for d in descriptions.split(",")]
+            choice = choice.split("\n")[-1] 
+        else:
+            descriptions = None
+        position = int(choice) - 1  # convert to 0-based indexing
 
+    except Exception as e: 
+        print(f"an error occured (images): {e}")
+        position = None
+        descriptions = None
     print("image response: ", choice)
-    position = int(choice) - 1  # convert to 0-based indexing
-    return position
+    return position, descriptions
 
 
 def process_word_response(response):
+    
     try:
-        
         choice = response.choices[0].message.content
-    except: 
-        print(f"unexpected word output: {choice}")
-        # & add to list or error triplets?
+        choice = choice.strip()
+        if len(choice) > 1: 
+            # assuming that descriptions are in the first line of response 
+            # and position in the last, whats in between doesnt matter
+            descriptions = choice.split("\n")[0]
+            descriptions = [d.strip().replace(" ", "_").lower() for d in descriptions.split(",")]
+            choice = choice.split("\n")[-1] 
+        else: 
+            descriptions = None
+        position = int(choice) - 1  # convert to 0-based indexing
+    except Exception as e: 
+        print(f"an error occured (words): {e}")
+        position = None
+        descriptions = None
+
     print("word response: ", choice)
-    position = int(choice) - 1  # convert to 0-based indexing
-    return position
+    return position, descriptions
 
 
 def shuffle_data(images: list, words: list, triplet: list):
@@ -251,7 +272,7 @@ def shuffle_data(images: list, words: list, triplet: list):
 
 def create_dataloader(
     image_fp, triplet_fp, concept_fp, non_unique_words_fp, image_size, seed=0
-):
+    ):
     """Create a dataloader of the images, words and indices used to probe gpt4"""
     triplet_matrix = np.loadtxt(triplet_fp, dtype=int)
     concepts = pd.read_csv(concept_fp, sep="\t")
@@ -294,45 +315,49 @@ def process_triplet(
     image_triplet,
     word_triplet,
     human_indices,
+    shuffled_triplet,
     prompt_words,
     prompt_images,
     temperature,
 ):
     triplet_responses = dict()
-    triplet_responses["human_triplet_indices"] = human_indices 
-    print("human indices: ", human_indices)
+    triplet_responses["human_triplet_indices"] = human_indices
     triplet_responses["human_ooo_index"] = human_indices[-1]
     triplet_responses["human_triplet_words"] = word_triplet
     print("word triplet: ", word_triplet)
     triplet_responses["human_ooo_word"] = word_triplet[-1]
     triplet_responses["errors"] = 0
 
-    image_query = get_image_query(image_triplet, prompt_images["prompt1"])
-    word_query = get_word_query(word_triplet, prompt_words["prompt1"])
+    image_query = get_image_query(image_triplet, prompt_images["prompt_test"])
+    word_query = get_word_query(word_triplet, prompt_words["prompt_test"])
 
     try: 
         image_response = get_gpt_response(client, image_query, temperature, max_tokens=300)
         word_response = get_gpt_response(client, word_query, temperature, max_tokens=300)
 
-        image_position = process_image_response(image_response)
-        word_position = process_word_response(word_response)
+        image_position, image_description = process_image_response(image_response)
+        word_position, word_description = process_word_response(word_response)
 
         # We ensure that the ooo index is always at the last position of the list
-        ooo_image = move_ooo_to_last_position(human_indices, image_position)
-        ooo_word = move_ooo_to_last_position(human_indices, word_position)
+        ooo_image = move_ooo_to_last_position(shuffled_triplet, image_position)
+        ooo_word = move_ooo_to_last_position(shuffled_triplet, word_position)
 
         ## Add below to the triplet_responses
+        triplet_responses["shuffled_triplet"] = shuffled_triplet
         triplet_responses["gpt_image_triplet_indices"] = ooo_image
         triplet_responses["gpt_image_ooo"] = ooo_image[-1]
         triplet_responses["gpt_word_indices"] = ooo_word
         triplet_responses["gpt_word_ooo"] = ooo_word[-1]
         triplet_responses["image_position"] = image_position
         triplet_responses["word_position"] = word_position
+        triplet_responses["image_description"] = image_description
+        triplet_responses["word_description"] = word_description
 
     except Exception as e: 
         ooo_image = human_indices 
         ooo_word = human_indices
         
+        triplet_responses["shuffled_triplet"] = shuffled_triplet
         triplet_responses["gpt_image_triplet_indices"] = ooo_image
         triplet_responses["gpt_image_ooo"] = None
         triplet_responses["gpt_word_indices"] = ooo_word
@@ -340,6 +365,8 @@ def process_triplet(
         triplet_responses["errors"] = 1
         triplet_responses["image_position"] = None
         triplet_responses["word_position"] = None
+        triplet_responses["image_description"] = None
+        triplet_responses["word_description"] = None
 
         print(f"An exception occured: {e}")
 
@@ -357,7 +384,7 @@ def extract_responses(
 ):
     
     responses = []
-    for i, (image_triplet, word_triplet, human_indices) in enumerate(dataloader):
+    for i, (image_triplet, word_triplet, human_indices, shuffled_triplet) in enumerate(dataloader):
         """We shuffle the triplet since we take the triplet indices from behavior, where we store
         the odd one out decision always in the last position and we want to make sure that the ordering
         is random and not related to the position of the odd one out as identified from human behavior"""
@@ -368,6 +395,7 @@ def extract_responses(
             image_triplet,
             word_triplet,
             human_indices,
+            shuffled_triplet,
             prompt_words,
             prompt_images,
             temperature,
