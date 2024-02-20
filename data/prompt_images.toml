@@ -1,5 +1,18 @@
 # Here we can check multiple prompts in the TOML files
 
+prompt_test = """
+Please take your time to read these instructions.
+Instructions
+
+You are a participant in a vision study. You have seen three pictures each showing an object or "thing". Focus on similarities between the objects. Two of them will be more similar to each other. Your job is to select the odd-one-out. Sometimes the decision is very difficult. Base your decision only on the most prominent object or "thing" in an image. If there is more than one, choose the most prominent.
+
+Your response should contain a brief explanation of your choice (no more than 10 words) and in the next line the position of the odd-one-out in the provided sequence, so a exactly one integer number between 1 and 3. 
+For example:
+Grape and plum are both fruits. 
+position
+
+Execute this task for the given triplet of images
+"""
 
 prompt1 = """
 Please take your time to read these instructions and FAQ.
