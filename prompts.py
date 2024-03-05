@@ -58,7 +58,7 @@ def accuracy(df, column, comparison, save=False):
     comparison_results = pd.DataFrame(index=[column, 'NaNs'], columns=col_list)
     for i in col_list:
         accuracy = (df[i][column].eq(df[i][comparison])).sum()
-        print(f"count: {accuracy}")
+        absolute_accuracy = accuracy
         nan = df[i][column].isna().sum()
         accuracy = accuracy / (len(df)-nan) * 100
         nan = nan / len(df) * 100 
@@ -73,8 +73,8 @@ def accuracy(df, column, comparison, save=False):
     p.despine(left=True)
     p.set_axis_labels("", "Accuracy (corrected for NaNs) / NaNs in %")
     name = column.split('_')[1]
-    p.fig.suptitle(f"{name} accuracies by prompt", y=1.02)
-    # plt.text(x=0.8, y=0.05, s="[Accuracy corrected for NaNs]", ha='left', va='center', transform=plt.gcf().transFigure, fontsize=12, color='black')
+    p.fig.suptitle(f"{name} accuracies", y=1.02)
+    plt.text(x=0.6, y=0.05, s=f"Number of correct ooo (absolute): {absolute_accuracy}", ha='left', va='center', transform=plt.gcf().transFigure, fontsize=12, color='black')
     if save: p.savefig("/home/muellerk/gpt-thesis/gpt-behavior/analysis/prompts_sim_matrix.png")
 
 def similarity(df, column1, column2, save=False):
@@ -116,7 +116,7 @@ path = "/home/muellerk/gpt-thesis/gpt-behavior/output/test"
 data = load_data(path)
 # nan_handling(data)
 
-# accuracy(data, 'gpt_image_ooo', 'human_ooo_index')
+accuracy(data, 'gpt_image_ooo', 'human_ooo_index')
 
-similarity(data, 'gpt_image_ooo', 'gpt_image_ooo')
+# similarity(data, 'gpt_image_ooo', 'gpt_image_ooo')
 

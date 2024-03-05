@@ -1,0 +1,220 @@
+User
+champagne, bacon, apron
+ooo
+Champagne and bacon are both consumables. 3
+Champagne and bacon are both consumables. position 3
+
+User
+scaffold, gearshift, shawl
+ooo
+Gearshift and shawl are items you can touch. 1
+Scaffold and gearshift are mechanical structures. position 3
+Scaffold and gearshift are mechanical constructs. position 3
+
+User
+footbath, pesto, snowball
+ooo
+Pesto and snowball are both cold items. 1
+Pesto is not an object typically used for body care. position 2
+Footbath and snowball aren't food. position 2
+Footbath and snowball are not edible. position 2
+
+User
+wig, duckling, sundial
+ooo
+Duckling is a living creature. 2
+Wig and duckling are not inanimate objects. position 3
+Wig and duckling both are associated with living organisms. position 3
+
+User
+teacup, hummus, snail
+ooo
+Hummus is an edible item. 2
+Teacup and snail have shells. position 2
+Teacup and snail both hold something. object 2
+Teacup and hummus are both inanimate. position 3
+
+User
+perfume, cobra, appetizer
+ooo
+Cobra is an animal, not a product. 2
+Cobra is a snake, not a product or food. position 2
+Perfume and appetizer are both associated with the senses. object 2
+Perfume and appetizer both appeal to human senses. object 2
+
+User
+rake, paddle, windshield wiper
+ooo
+Paddle and windshield wiper are tools for movement. position 1
+Rake and paddle are tools typically used by hand. 3
+Rake and paddle are tools handled manually. position 3
+
+User
+money, credit card, rabbit
+ooo
+Money and credit card are both means of payment. 2 !
+Money and credit card are both payment methods. position 3
+Money and credit card are both means of payment. object 3
+
+User
+metronome, throne, tape measure
+ooo
+Metronome and tape measure are both measurement tools. 2
+Metronome and tape measure both measure intervals. position 2
+Metronome and tape measure are related to measurement. position 2
+
+User
+jam, firetruck, bamboo
+ooo
+Jam and bamboo are plant-derived. 2
+Jam is not a vehicle or plant. position 1
+Jam and bamboo are not vehicles. position 2
+Jam and bamboo are not vehicles. position 2
+
+User
+rock, candlestick, bag
+ooo
+Rock and candlestick are both inanimate objects. 3
+Rock and candlestick are inanimate objects. position 3
+Rock and candlestick are both inanimate objects. position 3
+
+User
+sword, revolving door, lizard
+ooo
+Sword and lizard are not entryways. 2
+Revolving door is not a living organism. position 2
+Sword and revolving door are both man-made objects. object 3
+Sword and revolving door are man-made. position 3
+
+User
+hoodie, cigarette holder, fondue
+ooo
+Hoodie and fondue are not used for smoking. 2
+Hoodie is clothing; others are not. position 1
+Hoodie and cigarette holder don't hold food. position 3
+Hoodie and fondue are not used for smoking. object 2
+
+User
+trailer, brick, cufflink
+ooo
+Trailer and cufflink are not construction materials. 2
+Trailer and brick are both non-wearable items. position 3
+Trailer and brick are inanimate objects. position 3
+
+User
+suitcase, cart, squash
+ooo
+Suitcase and cart are both for carrying items. 3
+Suitcase and cart are used to carry things. position 3
+Cart and suitcase are items for carrying things. Object 3
+
+User
+racehorse, guardrail, sandwich
+ooo
+Racehorse and guardrail are not food. 2 !
+Racehorse and guardrail are not edible. position 3
+Racehorse and sandwich are not infrastructure. Object 2
+Racehorse and guardrail are not edible. position 3
+
+User
+outfit, home plate, chimney
+ooo
+Outfit is not a structure component. 1
+Outfit is not a part of a house structure. position 1
+Outfit and chimney are not sports-related. object 2
+
+User
+lemonade, sickle, mongoose
+ooo
+Lemonade is a beverage, the others are not. 1
+Lemonade is a drink, the others are not. position 1
+Lemonade and sickle are inanimate objects. object 3
+Lemonade and sickle are inanimate objects. position 3
+
+User
+cement mixer, gavel, ice pack
+ooo
+Cement mixer and ice pack are not used in law. 2
+Cement mixer and ice pack are not tools for justice. position 2
+Cement mixer and gavel are tools. object 3
+Gavel and ice pack are not machines. position 1
+Cement mixer and ice pack are used to mix substances. position 2
+cement mixer and gavel are tools. position 3
+
+User
+olive, fishbowl, cooler
+ooo
+Olive and cooler are not containers. 2
+Olive and fishbowl can both contain water. position 3
+Olive and cooler can both contain food. object 2
+Olive is not used for holding things. position 1
+------------------
+vegetable, microwave, megaphone
+flower, roller, polo shirt
+car, armor, toucan
+fishing_pole, salami, mouth
+van, banjo, orangutan
+porthole, medal, letter opener
+plunger, swing set, tuba
+hummus, fast food, blackberry
+visor, handkerchief, teapot
+fur_coat, petal, mallet
+
+Microwave and megaphone are both electronic devices. position 1
+
+Roller and polo shirt are both man-made objects. position 1
+
+Car and armor are both man-made objects. position 3
+Fishing pole and salami are elongated objects. position 3
+Van and banjo are both man-made objects. position 3
+
+Porthole and letter opener are both metal objects. position 2
+Porthole and medal are both circular. position 3
+
+Swing set and tuba are both metal objects. position 1
+Plunger and tuba both involve air movement. position 2
+
+Hummus and fast food are both types of food. position 3
+Visor and handkerchief are both items of clothing. position 3
+Fur coat and petal are both organic materials. position 3
+
+toothpick, freezer, road sign
+pajamas, necklace, meat
+ravioli, plum, grasshopper
+switch, tuba, amber
+license plate, propeller, tulip
+ottoman, blazer, pencil
+iguana, tumbleweed, barbell
+coffee bean, lamb chop, swing set
+washcloth, hairspray, cheeseburger
+spinach, orangutan, speedometer
+
+Toothpick and road sign are not appliances. position 2
+Toothpick and road sign are not appliances. position 2
+
+Pajamas and necklace are worn. position 3
+Pajamas and meat are not typically worn. position 2
+
+Ravioli and plum are edible. position 3
+Ravioli and plum are both food items. position 3
+
+Switch and tuba are non-solid. position 3
+Switch and tuba are man-made items. position 3
+
+License plate and propeller are metal objects. position 3
+License plate and propeller are man-made objects. position 3
+
+Ottoman and blazer are not writing tools. position 3
+Blazer and ottoman are types of furniture. position 3
+
+Iguana and tumbleweed are organic. position 3
+Iguana and tumbleweed are both naturally occurring. object 3
+
+Coffee bean and lamb chop are food items. position 3
+Coffee bean and lamb chop are both edible. position 3
+
+Washcloth and hairspray are hygiene items. position 3
+Washcloth and hairspray used for hygiene; cheeseburger is food. object 3
+
+Spinach and orangutan are biological. position 3
+Spinach and orangutan are biological organisms. position 3
