@@ -15,7 +15,8 @@ from utils import parse_non_unique_words
 
 
 # Martins key right now. Each triplet costs so lets think first before trying out many things
-API_key = os.environ["API_Key"]
+API_key = ""  # enter the key
+os.environ["OPENAI_API_KEY"] = API_key
 
 
 def parse_args():
