@@ -1,0 +1,99 @@
+User
+champagne, bacon, apron
+gpt4
+Champagne and bacon are both consumables. position 3
+
+User
+scaffold, gearshift, shawl
+gpt4
+Scaffold and gearshift are mechanical constructs. position 3
+
+User
+footbath, pesto, snowball
+gpt4
+Footbath and snowball aren't food. position 2
+
+User
+wig, duckling, sundial
+gpt4
+Wig and duckling both are associated with living organisms. position 3
+
+User
+teacup, hummus, snail
+gpt4
+Teacup and snail both hold something. object 2
+
+User
+perfume, cobra, appetizer
+gpt4
+Perfume and appetizer are both associated with the senses. object 2
+
+User
+rake, paddle, windshield wiper
+gpt4
+Rake and paddle are tools handled manually. position 3
+
+User
+money, credit card, rabbit
+gpt4
+Money and credit card are both means of payment. object 3
+
+User
+metronome, throne, tape measure
+gpt4
+Metronome and tape measure are related to measurement. position 2
+
+User
+jam, firetruck, bamboo
+gpt4
+Jam and bamboo are not vehicles. position 2
+
+User
+rock, candlestick, bag
+gpt4
+Rock and candlestick are both inanimate objects. position 3
+
+User
+sword, revolving door, lizard
+gpt4
+Sword and revolving door are both man-made objects. object 3
+
+User
+hoodie, cigarette holder, fondue
+gpt4
+Hoodie and cigarette holder don't hold food. position 3
+
+User
+trailer, brick, cufflink
+gpt4
+Trailer and brick are inanimate objects. position 3
+
+User
+suitcase, cart, squash
+gpt4
+Cart and suitcase are items for carrying things. Object 3
+
+User
+racehorse, guardrail, sandwich
+gpt4
+Racehorse and sandwich are not infrastructure. Object 2
+
+User
+outfit, home plate, chimney
+gpt4
+Outfit and chimney are not sports-related. object 2
+
+User
+lemonade, sickle, mongoose
+gpt4
+Lemonade and sickle are inanimate objects. object 3
+
+User
+cement mixer, gavel, ice pack
+gpt4
+Cement mixer and gavel are tools. object 3
+
+User
+olive, fishbowl, cooler
+gpt4
+Olive and cooler can both contain food. object 2

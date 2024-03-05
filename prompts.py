@@ -35,7 +35,10 @@ def load_data(dir):
         dataframe[column_to_convert] = pd.to_numeric(dataframe[column_to_convert], errors='coerce').astype('Int64')
 
         matches = re.findall(r'\d+', file)
-        prompt_number = int(matches[2])
+        try: 
+            prompt_number = int(matches[2])
+        except: 
+            prompt_number = i
         # batch = int(matches[3])
         name = f'Prompt_{prompt_number}' #_batch{batch}'
         dataframe.columns = pd.MultiIndex.from_product([[name], dataframe.columns])
@@ -55,6 +58,7 @@ def accuracy(df, column, comparison, save=False):
     comparison_results = pd.DataFrame(index=[column, 'NaNs'], columns=col_list)
     for i in col_list:
         accuracy = (df[i][column].eq(df[i][comparison])).sum()
+        absolute_accuracy = accuracy
         nan = df[i][column].isna().sum()
         accuracy = accuracy / (len(df)-nan) * 100
         nan = nan / len(df) * 100 
@@ -69,8 +73,8 @@ def accuracy(df, column, comparison, save=False):
     p.despine(left=True)
     p.set_axis_labels("", "Accuracy (corrected for NaNs) / NaNs in %")
     name = column.split('_')[1]
-    p.fig.suptitle(f"{name} accuracies by prompt", y=1.02)
-    # plt.text(x=0.8, y=0.05, s="[Accuracy corrected for NaNs]", ha='left', va='center', transform=plt.gcf().transFigure, fontsize=12, color='black')
+    p.fig.suptitle(f"{name} accuracies", y=1.02)
+    plt.text(x=0.6, y=0.05, s=f"Number of correct ooo (absolute): {absolute_accuracy}", ha='left', va='center', transform=plt.gcf().transFigure, fontsize=12, color='black')
     if save: p.savefig("/home/muellerk/gpt-thesis/gpt-behavior/analysis/prompts_sim_matrix.png")
 
 def similarity(df, column1, column2, save=False):
@@ -108,11 +112,11 @@ def nan_handling(df):
         for triplet in nan_df['Prompt_1']['gpt_image_triplet_indices']:
             output_file.write(' '.join(map(str, triplet)) + '\n')
 
-path = "/home/muellerk/gpt-thesis/gpt-behavior/output/1ktriplets"
+path = "/home/muellerk/gpt-thesis/gpt-behavior/output/test"
 data = load_data(path)
-nan_handling(data)
+# nan_handling(data)
 
-# accuracy(data, 'gpt_image_ooo', 'human_ooo_index')
+accuracy(data, 'gpt_image_ooo', 'human_ooo_index')
 
 # similarity(data, 'gpt_image_ooo', 'gpt_image_ooo')
 
